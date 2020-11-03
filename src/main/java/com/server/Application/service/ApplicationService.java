@@ -40,15 +40,15 @@ public class ApplicationService {
         byte[] encodedPublicKey = decoder.decodeBase64(publicKeyPEM);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(encodedPublicKey);
         KeyFactory factory = KeyFactory.getInstance("RSA");
-        PublicKey pk = factory.generatePublic(spec);
+        PublicKey publicKey = factory.generatePublic(spec);
 
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                 .setRequireExpirationTime() // the JWT must have an expiration time
-                .setAllowedClockSkewInSeconds(2592000) // allow some leeway in validating time based claims to account for clock skew
+                .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to account for clock skew
                 .setRequireSubject() // the JWT must have a subject claim
-                .setExpectedIssuer("https://vidispine.okta.com/oauth2/default") // whom the JWT needs to have been issued by
+                .setExpectedIssuer("0xVidiTest") // whom the JWT needs to have been issued by
                 .setExpectedAudience("api://default") // to whom the JWT is intended for
-                .setVerificationKey(pk) // verify the signature with the public key
+                .setVerificationKey(publicKey) // verify the signature with the public key
                 .build(); // create the JwtConsumer instance
         try
         {
@@ -73,14 +73,14 @@ public class ApplicationService {
 
         // Generate token claims
         JwtClaims claims = new JwtClaims();
-        claims.setIssuer("Vidispine test system");
-        claims.setAudience("Vidispine test audience");
+        claims.setIssuer("Test system");
+        claims.setAudience("Test audience");
         claims.setExpirationTimeMinutesInTheFuture(10);
         claims.setGeneratedJwtId();
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(2);
-        claims.setSubject("dimitris@vidispine.com");
-        claims.setClaim("user", user);
+        claims.setSubject("Test subject");
+        claims.setClaim("customUser", user);
 
         // Generate token signature
         JsonWebSignature jws = new JsonWebSignature();
