@@ -1,5 +1,7 @@
-package com.server.Application.api;
+package com.server.Application.controller;
 
+import com.server.Application.entity.PublicKeyEntity;
+import com.server.Application.service.ApplicationService;
 import org.javatuples.Pair;
 import org.jose4j.lang.JoseException;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +29,7 @@ public class ApplicationController {
     }
 
     @PostMapping(path = "/generate-key", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public String generateKey(@RequestBody PublicKeyModel key) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public String generateKey(@RequestBody PublicKeyEntity key) throws InvalidKeySpecException, NoSuchAlgorithmException {
         String publicKey = service.generateKey(key.getKeyExponent(), key.getKeyModulus());
         return "-----BEGIN PUBLIC KEY-----\n" + publicKey + "\n-----END PUBLIC KEY-----";
     }

@@ -1,13 +1,13 @@
-package com.server.Application.api;
+package com.server.Application.entity;
 
 import java.util.Objects;
 
-public class PublicKeyModel {
+public class PublicKeyEntity {
 
     private final String exponent;
     private final String modulus;
 
-    public PublicKeyModel( String exponent, String modulus) {
+    public PublicKeyEntity(String exponent, String modulus) {
         this.exponent = exponent;
         this.modulus = modulus;
     }
@@ -23,7 +23,7 @@ public class PublicKeyModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PublicKeyModel that = (PublicKeyModel) o;
+        PublicKeyEntity that = (PublicKeyEntity) o;
         return Objects.equals(exponent, that.exponent) &&
                 Objects.equals(modulus, that.modulus);
     }
