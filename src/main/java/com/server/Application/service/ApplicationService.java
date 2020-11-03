@@ -1,5 +1,12 @@
-package com.server.Application.service;
-import org.apache.commons.codec.binary.Base64;
+package com.server.application.service;
+
+import java.math.BigInteger;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+
 import org.javatuples.Pair;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
@@ -9,55 +16,42 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.lang.JoseException;
 import org.springframework.stereotype.Service;
-import java.math.BigInteger;
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-
 
 @Service
 public class ApplicationService {
 
     public String generateKey(String exp, String mod) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-        Base64 decoder = new Base64(true);
-
-        byte[] modulusByte = decoder.decodeBase64(mod);
-        BigInteger modulus = new BigInteger(1, modulusByte);
-        byte[] exponentByte = decoder.decodeBase64(exp);
+        byte[] moduloBytes = Base64.getUrlDecoder().decode(mod);
+        BigInteger modulus = new BigInteger(1, moduloBytes);
+        byte[] exponentByte = Base64.getDecoder().decode(exp);
         BigInteger exponent = new BigInteger(1, exponentByte);
-
         RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
         KeyFactory factory = KeyFactory.getInstance("RSA");
         PublicKey pk = factory.generatePublic(spec);
-        return Base64.encodeBase64String(pk.getEncoded());
+        return Base64.getEncoder().encodeToString(pk.getEncoded());
     }
 
     public String validateBearerToken(String publicKeyPEM, String token) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-        Base64 decoder = new Base64();
-        byte[] encodedPublicKey = decoder.decodeBase64(publicKeyPEM);
+        byte[] encodedPublicKey = Base64.getDecoder().decode(publicKeyPEM);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(encodedPublicKey);
         KeyFactory factory = KeyFactory.getInstance("RSA");
-        PublicKey pk = factory.generatePublic(spec);
+        PublicKey publicKey = factory.generatePublic(spec);
 
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                 .setRequireExpirationTime() // the JWT must have an expiration time
-                .setAllowedClockSkewInSeconds(2592000) // allow some leeway in validating time based claims to account for clock skew
+                .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to account for clock skew
                 .setRequireSubject() // the JWT must have a subject claim
-                .setExpectedIssuer("https://vidispine.okta.com/oauth2/default") // whom the JWT needs to have been issued by
-                .setExpectedAudience("api://default") // to whom the JWT is intended for
-                .setVerificationKey(pk) // verify the signature with the public key
+                .setExpectedIssuer("Test system") // whom the JWT needs to have been issued by
+                .setExpectedAudience("Test audience") // to whom the JWT is intended for
+                .setVerificationKey(publicKey) // verify the signature with the public key
                 .build(); // create the JwtConsumer instance
-        try
-        {
-            //  Validate the JWT and process it to the Claims
+        try {
             JwtClaims jwtClaims = jwtConsumer.processToClaims(token);
             System.out.println("JWT validation succeeded! " + jwtClaims);
             return "JWT validation succeeded! " + jwtClaims;
-        }
-        catch (InvalidJwtException e) {
+        } catch (InvalidJwtException e) {
             // InvalidJwtException will be thrown, if the JWT failed processing or validation in anyway.
             System.out.println("Invalid JWT! " + e);
             return "Invalid JWT! " + e;
@@ -73,14 +67,14 @@ public class ApplicationService {
 
         // Generate token claims
         JwtClaims claims = new JwtClaims();
-        claims.setIssuer("Vidispine test system");
-        claims.setAudience("Vidispine test audience");
+        claims.setIssuer("Test system");
+        claims.setAudience("Test audience");
         claims.setExpirationTimeMinutesInTheFuture(10);
         claims.setGeneratedJwtId();
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(2);
-        claims.setSubject("dimitris@vidispine.com");
-        claims.setClaim("user", user);
+        claims.setSubject("Test subject");
+        claims.setClaim("customUser", user);
 
         // Generate token signature
         JsonWebSignature jws = new JsonWebSignature();
