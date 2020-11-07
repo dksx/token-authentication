@@ -1,4 +1,4 @@
-package com.server.Application.service;
+package com.server.application.service;
 import org.apache.commons.codec.binary.Base64;
 import org.javatuples.Pair;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -46,8 +46,8 @@ public class ApplicationService {
                 .setRequireExpirationTime() // the JWT must have an expiration time
                 .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to account for clock skew
                 .setRequireSubject() // the JWT must have a subject claim
-                .setExpectedIssuer("0xVidiTest") // whom the JWT needs to have been issued by
-                .setExpectedAudience("api://default") // to whom the JWT is intended for
+                .setExpectedIssuer("Test system") // whom the JWT needs to have been issued by
+                .setExpectedAudience("Test audience") // to whom the JWT is intended for
                 .setVerificationKey(publicKey) // verify the signature with the public key
                 .build(); // create the JwtConsumer instance
         try

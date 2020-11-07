@@ -1,4 +1,4 @@
-package com.server.Application.entity;
+package com.server.application.entity;
 
 import java.util.Objects;
 

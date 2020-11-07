@@ -1,7 +1,7 @@
-package com.server.Application.controller;
+package com.server.application.controller;
 
-import com.server.Application.entity.PublicKeyEntity;
-import com.server.Application.service.ApplicationService;
+import com.server.application.entity.PublicKeyEntity;
+import com.server.application.service.ApplicationService;
 import org.javatuples.Pair;
 import org.jose4j.lang.JoseException;
 import org.springframework.web.bind.annotation.*;
