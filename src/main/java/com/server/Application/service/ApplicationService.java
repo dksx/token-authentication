@@ -64,7 +64,6 @@ public class ApplicationService {
         }
     }
 
-
     public Pair<String, String> generateSignedToken(String user) throws NoSuchAlgorithmException, JoseException {
         // Generate a key pair
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
