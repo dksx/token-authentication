@@ -1,16 +1,16 @@
 package com.server.application.controller;
 
+import javax.inject.Inject;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Map;
+
 import com.server.application.entity.PublicKeyEntity;
 import com.server.application.service.ApplicationService;
 import org.javatuples.Pair;
 import org.jose4j.lang.JoseException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
-
-import javax.inject.Inject;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
@@ -45,7 +45,7 @@ public class ApplicationController {
     public String generateSignedToken(@RequestBody Map<String, String> payload) throws JoseException, NoSuchAlgorithmException {
         Pair pair = service.generateSignedToken(payload.get("user"));
         String response = "Token:\n" + pair.getValue0() +
-                "\n\nPublic Key:\n-----BEGIN PUBLIC KEY-----\n" + pair.getValue1() + "\n-----END PUBLIC KEY-----" ;
+                "\n\nPublic Key:\n-----BEGIN PUBLIC KEY-----\n" + pair.getValue1() + "\n-----END PUBLIC KEY-----";
         return response;
     }
 }
